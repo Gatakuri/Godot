@@ -1,4 +1,4 @@
-extends CharacterBody3D  # Esta classe herda funcionalidades de CharacterBody3D para manipulação 3D do personagem
+extends CharacterBody3D
 
 class_name Character  # Define o nome da classe como Character para facilitar a instânciação no editor
 
@@ -6,6 +6,9 @@ const Normal_Speed: float = 5.0  # Velocidade normal do personagem
 const Sprint_Speed: float = 9.0  # Velocidade de corrida do personagem
 
 var current_speed: float  # Variável que armazena a velocidade atual do personagem
+var current_entity = null
+var is_freezed: bool = false
+var can_interact: bool = true
 
 @export_category("Objects")  # Define uma categoria "Objects" para organizar variáveis exportadas no editor
 @export var _body: Node3D = null  # Referência ao corpo do personagem no editor
@@ -14,10 +17,14 @@ var current_speed: float  # Variável que armazena a velocidade atual do persona
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)  # Define o modo de captura de mouse quando o jogo inicia
 
+
 func _physics_process(_delta: float) -> void:
+	if is_freezed:
+		return
+		
 	move()  # Chama a função de movimento do personagem
 	move_and_slide()  # Aplica física de movimento e colisão ao personagem
-	_body.animate(velocity)  # Atualiza a animação do corpo baseada na velocidade atual
+	#_body.animate(velocity)  # Atualiza a animação do corpo baseada na velocidade atual
 
 func move() -> void:
 	var input_direction: Vector2 = Input.get_vector(
@@ -51,3 +58,18 @@ func is_running() -> bool:
 
 	current_speed = Normal_Speed  # Define a velocidade atual como velocidade normal
 	return false  # Retorna false indicando que o personagem não está correndo
+	
+func freeze(_state: bool) -> void:
+	#_body.animation.play("Idle")
+	if _state:
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		
+	if not _state:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		
+	spring_arm_offset.can_rotate = not _state
+	is_freezed = _state
+
+func change_position(_position: Vector3, _rotation: float) -> void:
+	global_position = _position
+	_body.rotation.y = _rotation
