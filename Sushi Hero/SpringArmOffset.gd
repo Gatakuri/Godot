@@ -1,3 +1,4 @@
+
 extends Node3D  # Esta classe herda funcionalidades de Node3D para manipulação 3D
 
 class_name SpringArmCharacter  # Define o nome da classe como SpringArmCharacter para facilitar a instanciação no editor
@@ -6,8 +7,10 @@ const _mouse_sensibility: float = 0.003  # Sensibilidade do mouse para ajuste de
 
 @export_category("Objects")  # Define uma categoria "Objects" para organizar variáveis exportadas no editor
 @export var _spring_arm: SpringArm3D = null  # Referência ao SpringArm3D no editor
-
+var can_rotate: bool = true
 func _unhandled_input(_event) -> void:
+	if not can_rotate:
+		return
 	# Captura todos os eventos de input não tratados
 	if _event is InputEventMouseMotion:  # Verifica se o evento é movimento do mouse
 		rotate_y(-_event.relative.x * _mouse_sensibility)  # Rotaciona em Y com base no movimento relativo do mouse
